@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Kelas 8.2 | Jadwal & Tugas</title>
+  <meta
+    name="description"
+    content="Jadwal pelajaran dan daftar tugas kelas 8.2"
+  >
+  <meta name="theme-color" content="#f7f7f5">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="./main.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="topbar-inner">
+
+      <div class="brand">
+        <span class="brand-kicker">KELAS</span>
+        <h1>8.2</h1>
+        <p id="today-label">Memuat tanggal...</p>
+      </div>
+
+      <div class="topbar-actions">
+        <span id="operator-badge" class="badge" hidden>
+          Operator
+        </span>
+
+        <button
+  id="themeToggle"
+  class="btn btn-ghost theme-toggle"
+  type="button"
+  aria-label="Switch to dark mode"
+  title="Switch to dark mode"
+>
+  ☾
+        </button>
+        
+
+        <button
+          id="btn-login"
+          class="btn btn-ghost"
+          type="button"
+        >
+          Masuk operator
+        </button>
+
+        <button
+          id="btn-logout"
+          class="btn btn-ghost"
+          type="button"
+          hidden
+        >
+          Keluar
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+
+  <main class="container">
+
+    <!-- SUMMARY -->
+    <section class="summary" aria-label="Ringkasan tugas">
+
+      <div class="summary-card">
+        <span class="summary-label">Aktif</span>
+        <strong id="sum-active">0</strong>
+        <span class="summary-description">Tugas belum selesai</span>
+      </div>
+
+      <div class="summary-card summary-card-warning">
+        <span class="summary-label">Segera</span>
+        <strong id="sum-soon">0</strong>
+        <span class="summary-description">Deadline kurang dari 24 jam</span>
+      </div>
+
+      <div class="summary-card summary-card-done">
+        <span class="summary-label">Selesai</span>
+        <strong id="sum-done">0</strong>
+        <span class="summary-description">Tugas sudah selesai</span>
+      </div>
+
+    </section>
+
+
+    <!-- DAY NAVIGATION -->
+    <section class="day-section">
+
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">JADWAL</span>
+          <h2>Pelajaran minggu ini</h2>
+        </div>
+
+        <span id="selected-day-label" class="selected-day-label">
+          Senin
+        </span>
+      </div>
+
+      <nav
+        class="day-tabs"
+        role="tablist"
+        aria-label="Pilih hari"
+      >
+        <button
+          role="tab"
+          class="day-tab"
+          data-day="1"
+          type="button"
+          aria-selected="false"
+        >
+          <span>Sen</span>
+          <small>01</small>
+        </button>
+
+        <button
+          role="tab"
+          class="day-tab"
+          data-day="2"
+          type="button"
+          aria-selected="false"
+        >
+          <span>Sel</span>
+          <small>02</small>
+        </button>
+
+        <button
+          role="tab"
+          class="day-tab"
+          data-day="3"
+          type="button"
+          aria-selected="false"
+        >
+          <span>Rab</span>
+          <small>03</small>
+        </button>
+
+        <button
+          role="tab"
+          class="day-tab"
+          data-day="4"
+          type="button"
+          aria-selected="false"
+        >
+          <span>Kam</span>
+          <small>04</small>
+        </button>
+
+        <button
+          role="tab"
+          class="day-tab"
+          data-day="5"
+          type="button"
+          aria-selected="false"
+        >
+          <span>Jum</span>
+          <small>05</small>
+        </button>
+      </nav>
+
+    </section>
+
+
+    <!-- FILTER -->
+    <section class="toolbar">
+
+      <div class="filter-group" role="group" aria-label="Filter tugas">
+
+        <button
+          class="chip is-active"
+          data-filter="all"
+          type="button"
+        >
+          Semua
+        </button>
+
+        <button
+          class="chip"
+          data-filter="active"
+          type="button"
+        >
+          Aktif
+        </button>
+
+        <button
+          class="chip"
+          data-filter="done"
+          type="button"
+        >
+          Selesai
+        </button>
+
+      </div>
+
+      <div class="live-status">
+        <span class="live-dot"></span>
+        Data tersinkron
+      </div>
+
+    </section>
+
+
+    <!-- SCHEDULE -->
+    <section
+      id="schedule"
+      class="schedule"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <div class="loading-card">
+        <div class="loading-spinner"></div>
+        <span>Memuat jadwal...</span>
+      </div>
+    </section>
+
+  </main>
+
+
+  <footer class="footer">
+    <p>Kelas 8.2</p>
+    <span>Jadwal & tugas kelas</span>
+  </footer>
+
+
+  <!-- SUBJECT TEMPLATE -->
+  <template id="tpl-subject">
+
+    <article class="subject">
+
+      <header class="subject-head">
+
+        <div class="subject-info">
+          <div class="subject-icon" aria-hidden="true">
+            <span>•</span>
+          </div>
+
+          <div>
+            <h3 class="subject-name"></h3>
+            <span class="subject-time"></span>
+          </div>
+        </div>
+
+        <button
+          class="btn btn-small btn-primary op-only"
+          data-action="add-task"
+          type="button"
+          hidden
+        >
+          + Tugas
+        </button>
+
+      </header>
+
+      <div class="subject-content">
+
+        <ul class="task-list"></ul>
+
+        <p class="no-task-message">
+          Belum ada tugas untuk mata pelajaran ini.
+        </p>
+
+      </div>
+
+    </article>
+
+  </template>
+
+
+  <!-- TASK TEMPLATE -->
+  <template id="tpl-task">
+
+    <li class="task">
+
+      <div class="task-main">
+
+        <label class="task-check">
+          <input
+            type="checkbox"
+            class="task-checkbox"
+            disabled
+          >
+
+          <span
+            class="task-check-box"
+            aria-hidden="true"
+          ></span>
+        </label>
+
+        <div class="task-body">
+
+          <div class="task-heading">
+            <p class="task-title"></p>
+            <span class="task-status"></span>
+          </div>
+
+          <p class="task-desc"></p>
+
+          <div class="task-meta">
+            <span class="task-deadline"></span>
+            <span class="task-relative"></span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="task-actions op-only" hidden>
+
+        <button
+          class="btn btn-small"
+          data-action="toggle"
+          type="button"
+        >
+          Tandai selesai
+        </button>
+
+        <button
+          class="btn btn-small"
+          data-action="extend"
+          type="button"
+        >
+          Deadline
+        </button>
+
+        <button
+          class="btn btn-small btn-danger"
+          data-action="delete"
+          type="button"
+        >
+          Hapus
+        </button>
+
+      </div>
+
+    </li>
+
+  </template>
+
+
+  <!-- LOGIN MODAL -->
+  <dialog id="modal-login" class="modal">
+
+    <form id="form-login" class="modal-card">
+
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">OPERATOR</span>
+          <h2>Masuk</h2>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          data-close
+          aria-label="Tutup"
+        >
+          ×
+        </button>
+      </div>
+
+      <p class="modal-description">
+        Masuk untuk mengelola tugas kelas 8.2.
+      </p>
+
+      <label class="field">
+        <span>Email</span>
+        <input
+          type="email"
+          id="login-email"
+          autocomplete="username"
+          placeholder="operator@email.com"
+          required
+        >
+      </label>
+
+      <label class="field">
+        <span>Kata sandi</span>
+        <input
+          type="password"
+          id="login-password"
+          autocomplete="current-password"
+          placeholder="Kata sandi"
+          required
+        >
+      </label>
+
+      <p
+        id="login-error"
+        class="form-error"
+        role="alert"
+        hidden
+      ></p>
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="btn btn-ghost"
+          data-close
+        >
+          Batal
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+        >
+          Masuk
+        </button>
+
+      </div>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- ADD TASK MODAL -->
+  <dialog id="modal-task" class="modal">
+
+    <form id="form-task" class="modal-card">
+
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">OPERATOR</span>
+          <h2>Tambah tugas</h2>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          data-close
+          aria-label="Tutup"
+        >
+          ×
+        </button>
+      </div>
+
+      <p
+        id="task-subject-label"
+        class="modal-description"
+      ></p>
+
+      <label class="field">
+        <span>Judul tugas</span>
+        <input
+          type="text"
+          id="task-title"
+          maxlength="80"
+          placeholder="Contoh: Latihan halaman 42"
+          required
+        >
+      </label>
+
+      <label class="field">
+        <span>Keterangan</span>
+        <textarea
+          id="task-desc"
+          rows="3"
+          maxlength="300"
+          placeholder="Instruksi tambahan..."
+        ></textarea>
+      </label>
+
+      <label class="field">
+        <span>Deadline</span>
+        <input
+          type="datetime-local"
+          id="task-deadline"
+          required
+        >
+      </label>
+
+      <label class="switch-row">
+        <input
+          type="checkbox"
+          id="task-auto"
+          checked
+        >
+        <span class="switch"></span>
+        <span>
+          <strong>Otomatis selesai</strong>
+          <small>Tugas akan dianggap selesai saat deadline lewat.</small>
+        </span>
+      </label>
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="btn btn-ghost"
+          data-close
+        >
+          Batal
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+        >
+          Simpan tugas
+        </button>
+
+      </div>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- EXTEND DEADLINE MODAL -->
+  <dialog id="modal-extend" class="modal">
+
+    <form id="form-extend" class="modal-card">
+
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">OPERATOR</span>
+          <h2>Ubah deadline</h2>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          data-close
+          aria-label="Tutup"
+        >
+          ×
+        </button>
+      </div>
+
+      <p
+        id="extend-task-label"
+        class="modal-description"
+      ></p>
+
+      <label class="field">
+        <span>Deadline baru</span>
+        <input
+          type="datetime-local"
+          id="extend-deadline"
+          required
+        >
+      </label>
+
+      <div class="quick-extend">
+
+        <button
+          type="button"
+          class="chip"
+          data-add-hours="24"
+        >
+          +1 hari
+        </button>
+
+        <button
+          type="button"
+          class="chip"
+          data-add-hours="48"
+        >
+          +2 hari
+        </button>
+
+        <button
+          type="button"
+          class="chip"
+          data-add-hours="168"
+        >
+          +1 minggu
+        </button>
+
+      </div>
+
+      <p class="hint">
+        Jika tugas sebelumnya selesai otomatis, deadline baru akan membuatnya aktif kembali.
+      </p>
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="btn btn-ghost"
+          data-close
+        >
+          Batal
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+        >
+          Simpan deadline
+        </button>
+
+      </div>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- TOAST -->
+  <div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite"
+    hidden
+  ></div>
+
+  <!-- CUSTOM ALERT -->
+<dialog id="modal-alert" class="modal">
+  <div class="modal-card alert-card">
+    <div class="alert-icon" id="alert-icon">✓</div>
+
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow" id="alert-eyebrow">Notifikasi</span>
+        <h2 id="alert-title">Berhasil</h2>
+      </div>
+
+      <button
+        id="alert-close"
+        class="modal-close"
+        type="button"
+        aria-label="Tutup"
+      >
+        ×
+      </button>
+    </div>
+
+    <p id="alert-message" class="modal-description">
+      Operasi berhasil dilakukan.
+    </p>
+
+    <div class="modal-actions">
+      <button
+        id="alert-ok"
+        class="btn btn-primary"
+        type="button"
+      >
+        Oke
+      </button>
+    </div>
+  </div>
+</dialog>
+
+
+<!-- CUSTOM CONFIRM -->
+<dialog id="modal-confirm" class="modal">
+  <div class="modal-card alert-card">
+    <div class="alert-icon alert-icon-warning" id="confirm-icon">
+      !
+    </div>
+
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">Konfirmasi</span>
+        <h2 id="confirm-title">Yakin?</h2>
+      </div>
+
+      <button
+        id="confirm-close"
+        class="modal-close"
+        type="button"
+        aria-label="Tutup"
+      >
+        ×
+      </button>
+    </div>
+
+    <p id="confirm-message" class="modal-description">
+      Apakah kamu yakin ingin melanjutkan?
+    </p>
+
+    <div class="modal-actions">
+      <button
+        id="confirm-cancel"
+        class="btn btn-ghost"
+        type="button"
+      >
+        Batal
+      </button>
+
+      <button
+        id="confirm-ok"
+        class="btn btn-danger"
+        type="button"
+      >
+        Ya, lanjutkan
+      </button>
+    </div>
+  </div>
+</dialog>
+
+
+  <script type="module" src="./main.js"></script>
+
+</body>
+</html>
